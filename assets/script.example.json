@@ -1,0 +1,35 @@
+{
+  "id": "demo-tour",
+  "title": "Demo tour",
+  "segments": [
+    {
+      "id": "open-dashboard",
+      "narration": "Start on the dashboard. Everything you see is the real app.",
+      "ready_selector": "[data-page='dashboard']",
+      "pre_actions": [
+        { "type": "navigate", "url": "/dashboard" }
+      ],
+      "actions": [
+        {
+          "type": "wait_for_selector",
+          "selector": "[data-page='dashboard']",
+          "timeout_ms": 10000
+        }
+      ]
+    },
+    {
+      "id": "create-project",
+      "narration": "Click New, fill in the name, and save.",
+      "ready_target": { "text": "Project created" },
+      "actions": [
+        {
+          "type": "click",
+          "selector": "[data-action='new-project']",
+          "target": { "role": { "role": "button", "name": "New project" } }
+        },
+        { "type": "fill", "selector": "#project-name", "value": "My first project" },
+        { "type": "click", "selector": "[data-action='save']", "target": { "testid": "save-project" } }
+      ]
+    }
+  ]
+}

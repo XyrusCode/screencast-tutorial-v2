@@ -1,0 +1,21 @@
+[package]
+name = "screencast-v2"
+version = "0.1.0"
+edition = "2021"
+description = "Narrated screen-walkthrough tutorials driven by Vercel agent-browser"
+license = "MIT"
+readme = "README.md"
+
+[[bin]]
+name = "screencast-v2"
+path = "src/main.rs"
+
+[lib]
+name = "screencast_v2"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
