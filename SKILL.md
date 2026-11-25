@@ -10,7 +10,7 @@ description: "Record narrated screen-walkthrough tutorials of any web app using 
 workflow, use `screencast-tutorial` (v1) instead. Never mix the two.
 
 > Release status: `0.1.0` ships the CLI scaffold, config/script parsing and
-> docs. `inspect` and `validate` are available in this repo; `audio`, `record`,
+> docs. `inspect`, `validate` and `audio` are available in this repo; `record`,
 > `merge` and `all` land in follow-up PRs. If a stage reports "not implemented",
 > say so plainly rather than improvising a different toolchain.
 

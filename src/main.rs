@@ -97,7 +97,10 @@ fn run(command: Commands, config_path: &Path) -> Result<()> {
             let config = screencast_v2::config::load_config(config_path)?;
             screencast_v2::validate::run(&config, &script)
         }
-        Commands::Audio { .. } => not_yet("audio"),
+        Commands::Audio { script } => {
+            let config = screencast_v2::config::load_config(config_path)?;
+            screencast_v2::audio::run(&config, &script)
+        }
         Commands::Record { .. } => not_yet("record"),
         Commands::Merge { .. } => not_yet("merge"),
         Commands::All { .. } => not_yet("all"),
