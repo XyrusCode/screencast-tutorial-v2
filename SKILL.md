@@ -10,8 +10,8 @@ description: "Record narrated screen-walkthrough tutorials of any web app using 
 workflow, use `screencast-tutorial` (v1) instead. Never mix the two.
 
 > Release status: `0.1.0` ships the CLI scaffold, config/script parsing and
-> docs. `inspect`, `validate`, `audio` and `record` are available in this repo;
-> `merge` and `all` land in follow-up PRs. If a stage reports "not implemented",
+> docs. `inspect`, `validate`, `audio`, `record` and `merge` are available in
+> this repo; `all` lands in a follow-up PR. If a stage reports "not implemented",
 > say so plainly rather than improvising a different toolchain.
 
 ## Prerequisites
@@ -57,7 +57,8 @@ time, never stored in the repo.
    the script. It writes `output/raw/<script>-timings.json`.
 6. **Merge** — `screencast-v2 merge --script ...` cuts the continuous take per
    timing entry, delays narration to its start, freeze-pads the video tail,
-   loudnorms audio and writes `output/final/<segment>.mp4`.
+   loudnorms audio, writes `output/segments/<script>__<segment>.mp4` and
+   concatenates them into `output/final/<script>.mp4`.
 7. **Review** — watch the output at 1x. Check narration triggers after the
    screen settles, clicks are visible, and no segment is black.
 
