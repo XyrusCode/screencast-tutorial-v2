@@ -65,4 +65,5 @@ frame-accurate.
 Then: `inspect` and `validate` (browser adapter, auth setup, live gates), then
 `audio` (cached edge-tts clips + ffprobe manifest).
 Then: `record` (warm-up, continuous take, monotonic timing markers).
-Next PRs: `merge`, `all`, each with tests and the same PR → CI → merge loop.
+Then: `merge` (capped lead, cloned tail padding, loudnorm, re-encode, concat).
+Next PR: `all`, with tests and the same PR → CI → merge loop.

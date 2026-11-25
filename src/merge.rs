@@ -249,7 +249,9 @@ mod tests {
         let filter = args.iter().find(|value| value.contains("tpad")).unwrap();
         assert!(filter.contains("stop_mode=clone"));
         assert!(filter.contains("adelay=2500:all=1"));
-        assert!(args.windows(2).any(|pair| pair == ["-c:v", "libx264"]));
+        assert!(args
+            .windows(2)
+            .any(|pair| pair[0] == "-c:v" && pair[1] == "libx264"));
         assert!(!args.iter().any(|value| value == "copy"));
     }
 

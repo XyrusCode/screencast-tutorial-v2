@@ -18,4 +18,6 @@
   per-script manifest consumed by `record`.
 - `record`: continuous agent-browser take with warm-up gates, audio-sized
   holds and deterministic timing JSON.
-- Planned: `merge`, `all`.
+- `merge`: v1-compatible cut/pad/loudnorm math, re-encoded segment MP4s and a
+  concatenated final video.
+- Planned: `all`.
