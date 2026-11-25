@@ -6,8 +6,8 @@ small Rust CLI. This is **v2** of the `screencast-tutorial` skill; v1
 (TypeScript + Playwright) stays installed and untouched.
 
 > **Status: 0.1.0** — CLI scaffold, config/script parsing, docs and CI are in
-> place. The `inspect`, `validate`, `audio`, `record`, `merge` and `all`
-> stages land in follow-up PRs.
+> place. `inspect` and `validate` are implemented; `audio`, `record`, `merge`
+> and `all` land in follow-up PRs.
 
 ## Install the skill
 
@@ -40,7 +40,7 @@ any machine.
 
 ```
 screencast-v2 init                         # write starter config + script
-screencast-v2 inspect                      # dump routes and observed selectors
+screencast-v2 inspect --routes "/,/users"  # dump routes and observed selectors
 screencast-v2 validate --script <file>     # assert gates on the live app
 screencast-v2 audio    --script <file>     # narration mp3s + durations
 screencast-v2 record   --script <file>     # one continuous WebM + timings JSON
