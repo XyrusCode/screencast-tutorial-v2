@@ -3,6 +3,7 @@ pub mod auth;
 pub mod browser;
 pub mod config;
 pub mod inspect;
+pub mod merge;
 pub mod record;
 pub mod types;
 pub mod validate;
