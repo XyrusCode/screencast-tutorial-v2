@@ -16,4 +16,6 @@
   locators before any recording.
 - `audio`: cached edge-tts narration with ffprobe-measured durations and a
   per-script manifest consumed by `record`.
-- Planned: `record`, `merge`, `all`.
+- `record`: continuous agent-browser take with warm-up gates, audio-sized
+  holds and deterministic timing JSON.
+- Planned: `merge`, `all`.

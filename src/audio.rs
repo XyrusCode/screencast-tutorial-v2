@@ -68,7 +68,7 @@ pub fn run(config: &AppConfig, script_path: &Path) -> Result<()> {
         voice: config.voice.clone(),
         clips,
     };
-    let manifest_path = audio_dir.join(format!("{}-manifest.json", safe_name(&script.id)));
+    let manifest_path = load_manifest_path(Path::new(&config.output_dir), &script.id);
     fs::write(&manifest_path, serde_json::to_string_pretty(&manifest)?)?;
     println!("[audio] wrote {}", manifest_path.display());
     Ok(())
@@ -147,6 +147,12 @@ pub fn parse_ffprobe_duration(raw: &str) -> Result<u64> {
         bail!("ffprobe returned an invalid duration ({value:?})");
     }
     Ok((seconds * 1000.0).round() as u64)
+}
+
+pub fn load_manifest_path(output_dir: &Path, script_id: &str) -> PathBuf {
+    output_dir
+        .join("audio")
+        .join(format!("{}-manifest.json", safe_name(script_id)))
 }
 
 /// Segment ids become filenames, so keep them inside the audio directory.
