@@ -126,6 +126,35 @@ pub struct SegmentTiming {
     pub end_ms: u64,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
+pub struct AudioClip {
+    pub segment_id: String,
+    /// Path to the cached MP3, relative to the project root.
+    pub path: String,
+    /// Measured by ffprobe, never guessed from the text length.
+    pub duration_ms: u64,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
+pub struct AudioManifest {
+    pub script_id: String,
+    pub voice: String,
+    pub clips: Vec<AudioClip>,
+}
+
+pub fn load_audio_manifest(path: &Path) -> Result<AudioManifest> {
+    let raw = fs::read_to_string(path)
+        .map_err(|e| anyhow!("cannot read audio manifest {}: {e}", path.display()))?;
+    serde_json::from_str(&raw)
+        .map_err(|e| anyhow!("invalid audio manifest {}: {e}", path.display()))
+}
+
+pub fn load_timings(path: &Path) -> Result<Vec<SegmentTiming>> {
+    let raw = fs::read_to_string(path)
+        .map_err(|e| anyhow!("cannot read timings {}: {e}", path.display()))?;
+    serde_json::from_str(&raw).map_err(|e| anyhow!("invalid timings {}: {e}", path.display()))
+}
+
 pub fn load_script(path: &Path) -> Result<Script> {
     let raw = fs::read_to_string(path)
         .map_err(|e| anyhow!("cannot read script {}: {e}", path.display()))?;

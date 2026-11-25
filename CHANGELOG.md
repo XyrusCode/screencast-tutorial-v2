@@ -14,4 +14,6 @@
   nav discovery and v1-shaped selector dump.
 - `validate`: live gate replay using CSS selectors or semantic `target`
   locators before any recording.
-- Planned: `audio`, `record`, `merge`, `all`.
+- `audio`: cached edge-tts narration with ffprobe-measured durations and a
+  per-script manifest consumed by `record`.
+- Planned: `record`, `merge`, `all`.
