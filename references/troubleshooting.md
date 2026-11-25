@@ -2,7 +2,7 @@
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| "not implemented in 0.1.0" | stage not ported yet | expected in the initial release; check the repo issues for rollout |
+| Old binary reports a missing stage | v0.1.0 release is installed | re-download the matching `v0.2.0` asset from `/releases/latest/download/` |
 | `agent-browser: command not found` | package not on PATH or not installed | `npm install -g agent-browser && agent-browser install`, verify `agent-browser doctor` |
 | Recording fails before any frame | missing ffmpeg encoders | install ffmpeg with `libvpx` and `libx264`; re-run `agent-browser doctor` |
 | Narration finishes before the UI moves | hold sized from a guessed duration | re-run `audio` so ffprobe measures the real mp3; never time-stretch |

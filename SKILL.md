@@ -9,10 +9,9 @@ description: "Record narrated screen-walkthrough tutorials of any web app using 
 `agent-browser`** CLI. If the user asks for the original TypeScript/Playwright
 workflow, use `screencast-tutorial` (v1) instead. Never mix the two.
 
-> Release status: `0.1.0` ships the CLI scaffold, config/script parsing and
-> docs. `inspect`, `validate`, `audio`, `record` and `merge` are available in
-> this repo; `all` lands in a follow-up PR. If a stage reports "not implemented",
-> say so plainly rather than improvising a different toolchain.
+> Release status: `0.2.0` ships the complete pipeline: `inspect`, `validate`,
+> `audio`, `record`, `merge` and `all`. Install the published release binary;
+> never build from source locally.
 
 ## Prerequisites
 

@@ -8,7 +8,7 @@
 - Skill docs and references describing the agent-browser pipeline; v1 remains
   untouched.
 
-## [Unreleased]
+## [0.2.0] - 2026-11-25
 
 - `inspect`: named-session agent-browser route walk with auth setup, optional
   nav discovery and v1-shaped selector dump.
@@ -20,4 +20,5 @@
   holds and deterministic timing JSON.
 - `merge`: v1-compatible cut/pad/loudnorm math, re-encoded segment MP4s and a
   concatenated final video.
-- Planned: `all`.
+- `all`: runs audio -> record -> merge for one script and reports the final
+  output; the complete end-to-end pipeline is now available.
