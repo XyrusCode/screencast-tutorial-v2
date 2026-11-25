@@ -29,7 +29,17 @@ enum Commands {
         dir: PathBuf,
     },
     /// Inspect app routes and dump observed selectors
-    Inspect,
+    Inspect {
+        /// Comma-separated routes to inspect
+        #[arg(long, default_value = "/")]
+        routes: String,
+        /// Output JSON path (defaults to <output_dir>/ui-inspection.json)
+        #[arg(long)]
+        out: Option<PathBuf>,
+        /// Expand navigation menus before listing routes
+        #[arg(long)]
+        discover: bool,
+    },
     /// Validate a script against the live app
     Validate {
         #[arg(long)]
@@ -70,11 +80,23 @@ fn main() -> Result<()> {
     }
 }
 
-fn run(command: Commands, _config_path: &Path) -> Result<()> {
+fn run(command: Commands, config_path: &Path) -> Result<()> {
     match command {
         Commands::Init { dir } => init(&dir),
-        Commands::Inspect => not_yet("inspect"),
-        Commands::Validate { .. } => not_yet("validate"),
+        Commands::Inspect {
+            routes,
+            out,
+            discover,
+        } => {
+            let config = screencast_v2::config::load_config(config_path)?;
+            let out = out
+                .unwrap_or_else(|| Path::new(&config.output_dir).join("ui-inspection.json"));
+            screencast_v2::inspect::run(&config, &routes, &out, discover)
+        }
+        Commands::Validate { script } => {
+            let config = screencast_v2::config::load_config(config_path)?;
+            screencast_v2::validate::run(&config, &script)
+        }
         Commands::Audio { .. } => not_yet("audio"),
         Commands::Record { .. } => not_yet("record"),
         Commands::Merge { .. } => not_yet("merge"),

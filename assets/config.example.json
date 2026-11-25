@@ -9,12 +9,20 @@
     "root_selector": "[data-app-root]",
     "spinner_selectors": ["[data-testid='spinner']", ".loading"],
     "ready_selector": null,
-    "min_text_length": 120
+    "min_text_length": 120,
+    "nav_expand_selectors": [],
+    "nav_link_selector": "nav a[href], aside a[href]"
   },
   "auth": {
     "mode": "none",
     "token_env": null,
     "storage_key": null,
-    "token_url": null
+    "token_url": null,
+    "ui_login": {
+      "login_path": "/login",
+      "identifier_selector": "input[name='email'], #email",
+      "password_selector": "input[type=password]",
+      "submit_selector": "button[type='submit']"
+    }
   }
 }

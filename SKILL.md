@@ -10,9 +10,9 @@ description: "Record narrated screen-walkthrough tutorials of any web app using 
 workflow, use `screencast-tutorial` (v1) instead. Never mix the two.
 
 > Release status: `0.1.0` ships the CLI scaffold, config/script parsing and
-> docs. `inspect`, `validate`, `audio`, `record`, `merge` and `all` land in
-> follow-up PRs; if a stage reports "not implemented", say so plainly rather
-> than improvising a different toolchain.
+> docs. `inspect` and `validate` are available in this repo; `audio`, `record`,
+> `merge` and `all` land in follow-up PRs. If a stage reports "not implemented",
+> say so plainly rather than improvising a different toolchain.
 
 ## Prerequisites
 
@@ -40,8 +40,9 @@ time, never stored in the repo.
 
 ## Workflow
 
-1. **Inspect** — `screencast-v2 inspect` walks the configured routes with
-   agent-browser and writes `output/ui-inspection.json`. Author selectors only
+1. **Inspect** — `screencast-v2 inspect --routes "/,/students" [--discover]`
+   walks the configured routes with agent-browser and writes
+   `output/ui-inspection.json` (override with `--out`). Author selectors only
    from what you actually observed; no guessed CSS.
 2. **Author** — write `config/<script>.json` (see
    [script-schema.md](references/script-schema.md)). Every visible step gets

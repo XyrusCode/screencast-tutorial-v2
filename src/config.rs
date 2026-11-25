@@ -87,6 +87,8 @@ pub struct ShellConfig {
     pub spinner_selectors: Vec<String>,
     pub ready_selector: Option<String>,
     pub min_text_length: usize,
+    pub nav_expand_selectors: Vec<String>,
+    pub nav_link_selector: Option<String>,
 }
 
 impl Default for ShellConfig {
@@ -96,6 +98,8 @@ impl Default for ShellConfig {
             spinner_selectors: vec!["[data-testid='spinner']".into(), ".loading".into()],
             ready_selector: None,
             min_text_length: 120,
+            nav_expand_selectors: Vec::new(),
+            nav_link_selector: Some("nav a[href], aside a[href]".into()),
         }
     }
 }
@@ -107,6 +111,7 @@ pub struct AuthConfig {
     pub token_env: Option<String>,
     pub storage_key: Option<String>,
     pub token_url: Option<String>,
+    pub ui_login: Option<UiLogin>,
 }
 
 impl Default for AuthConfig {
@@ -116,6 +121,27 @@ impl Default for AuthConfig {
             token_env: None,
             storage_key: None,
             token_url: None,
+            ui_login: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
+pub struct UiLogin {
+    pub login_path: String,
+    pub identifier_selector: String,
+    pub password_selector: String,
+    pub submit_selector: String,
+}
+
+impl Default for UiLogin {
+    fn default() -> Self {
+        Self {
+            login_path: "/login".into(),
+            identifier_selector: "input[name='email'], #email".into(),
+            password_selector: "input[type='password']".into(),
+            submit_selector: "button[type='submit']".into(),
         }
     }
 }

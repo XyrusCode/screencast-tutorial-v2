@@ -10,4 +10,8 @@
 
 ## [Unreleased]
 
-- Planned: `inspect`, `validate`, `audio`, `record`, `merge`, `all`.
+- `inspect`: named-session agent-browser route walk with auth setup, optional
+  nav discovery and v1-shaped selector dump.
+- `validate`: live gate replay using CSS selectors or semantic `target`
+  locators before any recording.
+- Planned: `audio`, `record`, `merge`, `all`.
