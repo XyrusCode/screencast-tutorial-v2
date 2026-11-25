@@ -1,0 +1,56 @@
+name: Build Check
+
+# CI is the only build authority for this Rust project.
+# Never run cargo locally for verification — see AGENTS.md.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .
+
+      - name: Cargo check
+        run: cargo check --workspace
+
+      - name: Cargo test
+        run: cargo test --workspace
+
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .
+
+      - name: CLI smoke test
+        shell: pwsh
+        run: |
+          cargo run --quiet -- --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo run --quiet -- --help
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $dir = Join-Path $env:RUNNER_TEMP "screencast-v2-init"
+          New-Item -ItemType Directory -Force $dir | Out-Null
+          cargo run --quiet -- init --dir $dir
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not (Test-Path (Join-Path $dir "config/app.config.json"))) { throw "init did not write config" }
+          if (-not (Test-Path (Join-Path $dir "config/script.example.json"))) { throw "init did not write script" }

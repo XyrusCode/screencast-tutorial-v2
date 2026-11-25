@@ -1,0 +1,30 @@
+{
+  "id": "demo-tour",
+  "title": "Demo tour",
+  "segments": [
+    {
+      "id": "intro",
+      "narration": "Welcome to the demo.",
+      "ready_selector": "[data-page='home']",
+      "pre_actions": [
+        { "type": "navigate", "url": "/dashboard" }
+      ],
+      "actions": [
+        {
+          "type": "click",
+          "selector": "[data-action='new']",
+          "target": { "role": { "role": "button", "name": "New" } }
+        }
+      ]
+    },
+    {
+      "id": "create",
+      "narration": "Create a project.",
+      "ready_target": { "text": "Project created" },
+      "actions": [
+        { "type": "fill", "selector": "#name", "value": "My project" },
+        { "type": "wait_for_selector", "selector": "[data-testid='saved']", "timeout_ms": 5000 }
+      ]
+    }
+  ]
+}

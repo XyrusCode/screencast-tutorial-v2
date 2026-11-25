@@ -1,0 +1,4 @@
+[
+  { "segment_id": "intro", "start_ms": 0, "narration_start_ms": 250, "end_ms": 1800 },
+  { "segment_id": "create", "start_ms": 1800, "narration_start_ms": 2000, "end_ms": 4200 }
+]

@@ -1,0 +1,7 @@
+/target
+/output
+.env
+config.local.json
+*.mp3
+*.webm
+*.log

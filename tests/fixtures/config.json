@@ -1,0 +1,19 @@
+{
+  "name": "Demo App",
+  "base_url": "http://localhost:3000",
+  "login_path": "/login",
+  "voice": "en-US-AriaNeural",
+  "output_dir": "output",
+  "viewport": { "width": 1280, "height": 800 },
+  "shell": {
+    "root_selector": "[data-app-root]",
+    "spinner_selectors": ["[data-testid='spinner']"],
+    "ready_selector": "[data-page='dashboard']",
+    "min_text_length": 120
+  },
+  "auth": {
+    "mode": "localStorage-token",
+    "token_env": "DEMO_TOKEN",
+    "storage_key": "demo.token"
+  }
+}

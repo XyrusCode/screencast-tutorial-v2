@@ -1,0 +1,142 @@
+name: Release
+
+# Version-driven releases, mirroring Video-Plucker:
+#   check   — version numbers are single-use and must increase
+#   build   — one release binary per OS/arch
+#   publish — one GitHub Release with stable asset names, so the
+#             /releases/latest/download/... URLs in the install prompt
+#             never need editing when the version changes.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Cargo.toml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      release: ${{ steps.resolve.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version and whether it needs releasing
+        id: resolve
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(grep -m1 '^version = ' Cargo.toml | cut -d'"' -f2)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          highest=$(gh release list --limit 100 --json tagName --jq '.[].tagName' | sed 's/^v//' | sort -V | tail -1)
+          if [ -n "$highest" ] && [ "$version" != "$highest" ] && [ "$(printf '%s\n%s\n' "$version" "$highest" | sort -V | tail -1)" = "$highest" ]; then
+            echo "::error::Version $version is not above the latest release ($highest). A version number is used once: pick a higher one."
+            exit 1
+          fi
+          if gh release view "v$version" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "Release v$version already exists — nothing to do."
+          else
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "New version v$version — a release will be built."
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.release == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset: screencast-v2_linux-x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset: screencast-v2_windows-x86_64.exe
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+            asset: screencast-v2_macos-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset: screencast-v2_macos-aarch64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .
+
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Stage asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            cp "target/${{ matrix.target }}/release/screencast-v2.exe" "${{ matrix.asset }}"
+          else
+            cp "target/${{ matrix.target }}/release/screencast-v2" "${{ matrix.asset }}"
+            chmod +x "${{ matrix.asset }}"
+          fi
+
+      - name: Upload asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: screencast-v2-${{ matrix.target }}
+          path: ${{ matrix.asset }}
+          if-no-files-found: error
+
+  publish:
+    needs: [check, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Extract release notes
+        id: notes
+        run: |
+          version="${{ needs.check.outputs.version }}"
+          body=$(awk -v v="$version" '
+            BEGIN { found = 0 }
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ ("^## \\[" v "\\]")) { found = 1; next }
+            }
+            found { print }
+          ' CHANGELOG.md)
+          if [ -z "$body" ]; then body="Screencast Tutorial v2 v$version"; fi
+          {
+            echo "body<<EOF"
+            echo "$body"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ needs.check.outputs.version }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "screencast-tutorial-v2 v${{ needs.check.outputs.version }}" \
+            --notes "${{ steps.notes.outputs.body }}" \
+            dist/*
