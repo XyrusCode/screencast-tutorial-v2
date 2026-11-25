@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::Result;
 use clap::{CommandFactory, Parser, Subcommand};
 use std::fs;
 use std::path::Path;
@@ -109,7 +109,10 @@ fn run(command: Commands, config_path: &Path) -> Result<()> {
             let config = screencast_v2::config::load_config(config_path)?;
             screencast_v2::merge::run(&config, &script)
         }
-        Commands::All { .. } => not_yet("all"),
+        Commands::All { script } => {
+            let config = screencast_v2::config::load_config(config_path)?;
+            screencast_v2::all::run(&config, &script)
+        }
     }
 }
 
@@ -129,8 +132,4 @@ fn init(dir: &Path) -> Result<()> {
     println!("starter config: {}", config_path.display());
     println!("starter script: {}", script_path.display());
     Ok(())
-}
-
-fn not_yet(stage: &str) -> Result<()> {
-    bail!("stage `{stage}` is not implemented in 0.1.0 — see references/architecture.md for the rollout order")
 }

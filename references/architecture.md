@@ -66,4 +66,5 @@ Then: `inspect` and `validate` (browser adapter, auth setup, live gates), then
 `audio` (cached edge-tts clips + ffprobe manifest).
 Then: `record` (warm-up, continuous take, monotonic timing markers).
 Then: `merge` (capped lead, cloned tail padding, loudnorm, re-encode, concat).
-Next PR: `all`, with tests and the same PR → CI → merge loop.
+Then: `all` (audio -> record -> merge in one call), completing the pipeline in
+`0.2.0`. All stages are CI-verified through the same PR → CI → merge loop.

@@ -5,9 +5,8 @@ Narrated screen-walkthrough tutorials of any web app, driven by
 small Rust CLI. This is **v2** of the `screencast-tutorial` skill; v1
 (TypeScript + Playwright) stays installed and untouched.
 
-> **Status: 0.1.0** — CLI scaffold, config/script parsing, docs and CI are in
-> place. `inspect`, `validate`, `audio`, `record` and `merge` are implemented;
-> `all` lands in a follow-up PR.
+> **Status: 0.2.0** — the full pipeline is implemented: `inspect`, `validate`,
+> `audio`, `record`, `merge` and `all`. CI builds and publishes release binaries.
 
 ## Install the skill
 

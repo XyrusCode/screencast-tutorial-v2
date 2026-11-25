@@ -28,7 +28,7 @@ fn help_lists_planned_stages() {
         .expect("run screencast-v2 --help");
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    for stage in ["inspect", "validate", "audio", "record", "merge"] {
+    for stage in ["inspect", "validate", "audio", "record", "merge", "all"] {
         assert!(stdout.contains(stage), "help is missing stage `{stage}`");
     }
 }

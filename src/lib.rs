@@ -1,3 +1,4 @@
+pub mod all;
 pub mod audio;
 pub mod auth;
 pub mod browser;
