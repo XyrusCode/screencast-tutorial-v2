@@ -172,6 +172,18 @@ impl Browser {
         Ok(())
     }
 
+    /// Start a continuous, video-only take of the current active tab.
+    pub fn record_start(&self, path: &Path, cursor: bool) -> Result<()> {
+        self.run_owned(record_start_args(path, cursor))?;
+        Ok(())
+    }
+
+    /// Stop the take and flush the video file.
+    pub fn record_stop(&self) -> Result<()> {
+        self.run(&["record", "stop"])?;
+        Ok(())
+    }
+
     pub fn close(&self) -> Result<()> {
         self.run(&["close"])?;
         Ok(())
@@ -203,6 +215,19 @@ pub fn resolve_url(base_url: &str, url: &str) -> String {
         return url.to_string();
     }
     format!("{}/{}", base_url.trim_end_matches('/'), url.trim_start_matches('/'))
+}
+
+/// `agent-browser record start <path> [--cursor]`
+pub fn record_start_args(path: &Path, cursor: bool) -> Vec<String> {
+    let mut args = vec![
+        "record".into(),
+        "start".into(),
+        path.to_string_lossy().into_owned(),
+    ];
+    if cursor {
+        args.push("--cursor".into());
+    }
+    args
 }
 
 /// Build `find`/direct-locator arguments for a semantic target.
@@ -380,6 +405,14 @@ mod tests {
         assert_eq!(
             action_args(&fill, "http://x").unwrap(),
             vec!["fill", "@e3", "--", "--not-a-flag"]
+        );
+    }
+
+    #[test]
+    fn record_start_uses_the_user_supplied_path() {
+        assert_eq!(
+            record_start_args(Path::new("output/raw/demo.webm"), true),
+            vec!["record", "start", "output/raw/demo.webm", "--cursor"]
         );
     }
 

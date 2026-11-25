@@ -6,7 +6,7 @@ small Rust CLI. This is **v2** of the `screencast-tutorial` skill; v1
 (TypeScript + Playwright) stays installed and untouched.
 
 > **Status: 0.1.0** — CLI scaffold, config/script parsing, docs and CI are in
-> place. `inspect`, `validate` and `audio` are implemented; `record`, `merge`
+> place. `inspect`, `validate`, `audio` and `record` are implemented; `merge`
 > and `all` land in follow-up PRs.
 
 ## Install the skill

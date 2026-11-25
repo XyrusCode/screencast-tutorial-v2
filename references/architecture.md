@@ -64,5 +64,5 @@ frame-accurate.
 0.1.0: CLI scaffold, config/script/timing types, fixtures, CI and docs.
 Then: `inspect` and `validate` (browser adapter, auth setup, live gates), then
 `audio` (cached edge-tts clips + ffprobe manifest).
-Next PRs: `record`, `merge`, `all`, each with tests and the same
-PR → CI → merge loop.
+Then: `record` (warm-up, continuous take, monotonic timing markers).
+Next PRs: `merge`, `all`, each with tests and the same PR → CI → merge loop.

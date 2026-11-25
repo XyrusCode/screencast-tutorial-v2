@@ -6,7 +6,7 @@ use std::path::Path;
 use crate::auth;
 use crate::browser::Browser;
 use crate::config::AppConfig;
-use crate::types::{load_script, Target};
+use crate::types::{load_script, Segment, Target};
 
 pub fn run(config: &AppConfig, script_path: &Path) -> Result<()> {
     let script = load_script(script_path)?;
@@ -17,7 +17,9 @@ pub fn run(config: &AppConfig, script_path: &Path) -> Result<()> {
     browser.open(Some(&config.base_url), init_script.as_deref())?;
 
     let mut failures = Vec::new();
-    shell_gate(&browser, config, &mut failures);
+    if let Err(error) = settle(&browser, config, None) {
+        failures.push(format!("shell: {error}"));
+    }
 
     for segment in &script.segments {
         for action in segment.pre_actions.iter().chain(segment.actions.iter()) {
@@ -26,28 +28,8 @@ pub fn run(config: &AppConfig, script_path: &Path) -> Result<()> {
             }
         }
 
-        if let Some(selector) = segment
-            .ready_selector
-            .as_deref()
-            .or(config.shell.ready_selector.as_deref())
-        {
-            if let Err(error) = browser.wait_selector(selector, "visible", 10_000) {
-                failures.push(format!("{} ready selector `{selector}`: {error}", segment.id));
-            }
-        }
-
-        match &segment.ready_target {
-            Some(Target::Text(text)) | Some(Target::TextExact(text)) => {
-                if let Err(error) = browser.wait_text(text, 10_000) {
-                    failures.push(format!("{} ready text `{text}`: {error}", segment.id));
-                }
-            }
-            Some(target) => {
-                if let Err(error) = browser.wait_selector(&target_label(target), "visible", 10_000) {
-                    failures.push(format!("{} ready target: {error}", segment.id));
-                }
-            }
-            None => {}
+        if let Err(error) = settle(&browser, config, Some(segment)) {
+            failures.push(format!("{} gate: {error}", segment.id));
         }
     }
 
@@ -63,7 +45,12 @@ pub fn run(config: &AppConfig, script_path: &Path) -> Result<()> {
     Ok(())
 }
 
-fn shell_gate(browser: &Browser, config: &AppConfig, failures: &mut Vec<String>) {
+/// Assert the shell is up, spinners are gone and the requested ready gate is
+/// visible. Used by both `validate` and `record` so a take cannot start on an
+/// unsettled screen.
+pub fn settle(browser: &Browser, config: &AppConfig, segment: Option<&Segment>) -> Result<()> {
+    let mut failures = Vec::new();
+
     if let Err(error) = browser.wait_selector(&config.shell.root_selector, "attached", 15_000) {
         failures.push(format!("shell root `{}`: {error}", config.shell.root_selector));
     }
@@ -71,6 +58,49 @@ fn shell_gate(browser: &Browser, config: &AppConfig, failures: &mut Vec<String>)
         if let Err(error) = browser.wait_selector(spinner, "hidden", 15_000) {
             failures.push(format!("spinner `{spinner}`: {error}"));
         }
+    }
+
+    let segment_ready = segment.and_then(|value| value.ready_selector.as_deref());
+    let config_ready = config.shell.ready_selector.as_deref();
+    if let Some(selector) = segment_ready.or(config_ready) {
+        if let Err(error) = browser.wait_selector(selector, "visible", 10_000) {
+            failures.push(format!("ready selector `{selector}`: {error}"));
+        }
+    }
+
+    if let Some(target) = segment.and_then(|value| value.ready_target.as_ref()) {
+        match target {
+            Target::Text(text) | Target::TextExact(text) => {
+                if let Err(error) = browser.wait_text(text, 10_000) {
+                    failures.push(format!("ready text `{text}`: {error}"));
+                }
+            }
+            target => {
+                let selector = target_label(target);
+                if let Err(error) = browser.wait_selector(&selector, "visible", 10_000) {
+                    failures.push(format!("ready target: {error}"));
+                }
+            }
+        }
+    }
+
+    // Fallback used by v1 when a segment has no explicit ready gate: wait for
+    // enough stable shell text so hydration has actually finished.
+    if segment_ready.is_none()
+        && segment.and_then(|value| value.ready_target.as_ref()).is_none()
+        && config_ready.is_none()
+    {
+        let min = config.shell.min_text_length;
+        let expression = format!("document.body && document.body.innerText.trim().length >= {min}");
+        if let Err(error) = browser.wait_fn(&expression, 10_000) {
+            failures.push(format!("shell text >= {min} chars: {error}"));
+        }
+    }
+
+    if failures.is_empty() {
+        Ok(())
+    } else {
+        bail!("{}", failures.join("; "))
     }
 }
 
